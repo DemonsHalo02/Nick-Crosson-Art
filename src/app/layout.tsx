@@ -15,7 +15,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Nick Crosson Official Art",
-  description: "Exclusive high-resolution manhwa and art projects by Nick Crosson.",
+  description: "Exclusive high-resolution comic and art projects by Nick Crosson.",
 };
 
 export default function RootLayout({

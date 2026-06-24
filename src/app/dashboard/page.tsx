@@ -93,7 +93,7 @@ export default function DashboardPage() {
             <div className="max-w-md mx-auto text-center space-y-8 mb-24 border border-white/10 p-8 bg-zinc-950">
               <h2 className="text-2xl font-light tracking-widest uppercase">Upgrade to Premium</h2>
               <p className="text-zinc-400 font-light text-sm leading-relaxed">
-                Subscribe to unlock premium art, full manhwa chapters, and the ability to upload your own creations to the community.
+                Subscribe to unlock premium art, full comic chapters, and the ability to upload your own creations to the community.
               </p>
               <div className="bg-white p-4 rounded-md">
                 <PayPalButtons 

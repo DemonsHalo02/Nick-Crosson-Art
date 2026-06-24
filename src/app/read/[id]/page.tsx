@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Send, Lock } from "lucide-react";
 
-export default function ReadManhwaPage({ params }: { params: { id: string } }) {
+export default function ReadComicPage({ params }: { params: { id: string } }) {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [post, setPost] = useState<any>(null);
@@ -128,7 +128,7 @@ export default function ReadManhwaPage({ params }: { params: { id: string } }) {
           </div>
         ) : (
           <>
-            {/* Manhwa Reader Container */}
+            {/* Comic Reader Container */}
             <div className="space-y-4 mb-24 min-h-screen">
               {post.description && (
                 <div className="mb-12 text-center text-zinc-400 font-light max-w-2xl mx-auto">

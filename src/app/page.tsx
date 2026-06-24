@@ -39,7 +39,7 @@ export default function Home() {
           className="text-center z-10 space-y-6"
         >
           <h1 className="text-5xl md:text-8xl font-light tracking-tighter">
-            Exclusive <br /> <span className="font-serif italic">Manhwa & Art</span>
+            Exclusive <br /> <span className="font-serif italic">Comic & Art</span>
           </h1>
           <p className="max-w-md mx-auto text-zinc-400 text-lg md:text-xl font-light leading-relaxed">
             Step into the official archive. High-resolution chapters, behind-the-scenes concepts, and an ad-free reading experience.
@@ -66,7 +66,7 @@ export default function Home() {
           <FeatureCard 
             icon={<ImageIcon className="w-8 h-8 mb-6" />}
             title="High-Res Quality"
-            description="Experience every detail of the manhwa exactly as drawn, in uncompressed high resolution."
+            description="Experience every detail of the comic exactly as drawn, in uncompressed high resolution."
           />
           <FeatureCard 
             icon={<ShieldCheck className="w-8 h-8 mb-6" />}
