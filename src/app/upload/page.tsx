@@ -6,7 +6,7 @@ import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/fires
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Upload } from "lucide-react";
+import { ArrowLeft, Upload, Loader2, ImagePlus } from "lucide-react";
 
 export default function UploadPage() {
   const [user, setUser] = useState<any>(null);
@@ -18,6 +18,7 @@ export default function UploadPage() {
   const [imageUrls, setImageUrls] = useState("");
   const [isPremium, setIsPremium] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
   const [error, setError] = useState("");
 
   const router = useRouter();
@@ -43,6 +44,51 @@ export default function UploadPage() {
 
     return () => unsubscribe();
   }, [router]);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+    if (!cloudName || !uploadPreset) {
+      setError("Cloudinary is not configured. Please add NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME and NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET to your Cloudflare Environment Variables.");
+      return;
+    }
+
+    setUploadingFiles(true);
+    setError("");
+    
+    const uploadedUrls: string[] = [];
+
+    try {
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", uploadPreset);
+
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+        if (data.secure_url) {
+          uploadedUrls.push(data.secure_url);
+        } else {
+          throw new Error(data.error?.message || "Failed to upload image");
+        }
+      }
+      
+      const currentUrls = imageUrls ? imageUrls.trim() + "\n" : "";
+      setImageUrls(currentUrls + uploadedUrls.join("\n"));
+    } catch (err: any) {
+      setError("Failed to upload images. Make sure your upload preset is 'unsigned'.");
+    } finally {
+      setUploadingFiles(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,8 +164,25 @@ export default function UploadPage() {
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-xs uppercase tracking-widest text-zinc-500">Image URLs (One per line)</label>
+          <div className="space-y-4">
+            <label className="text-xs uppercase tracking-widest text-zinc-500">Images</label>
+            
+            <div className="flex items-center gap-4">
+              <label className={`cursor-pointer flex items-center justify-center gap-2 bg-zinc-900 border border-white/10 px-6 py-3 text-sm tracking-widest uppercase transition-colors ${uploadingFiles ? 'opacity-50 cursor-not-allowed' : 'hover:bg-zinc-800'}`}>
+                {uploadingFiles ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImagePlus className="w-4 h-4" />}
+                {uploadingFiles ? 'Uploading...' : 'Upload Files'}
+                <input 
+                  type="file" 
+                  multiple 
+                  accept="image/*" 
+                  onChange={handleFileUpload} 
+                  disabled={uploadingFiles}
+                  className="hidden" 
+                />
+              </label>
+              <span className="text-xs text-zinc-500 font-light">Or paste URLs below</span>
+            </div>
+
             <textarea 
               required
               value={imageUrls}
@@ -127,7 +190,7 @@ export default function UploadPage() {
               className="w-full bg-zinc-950 border border-white/10 px-4 py-3 text-white placeholder-zinc-700 focus:outline-none focus:border-white/40 transition-colors h-48 resize-none font-mono text-sm"
               placeholder="https://res.cloudinary.com/.../image1.jpg&#10;https://res.cloudinary.com/.../image2.jpg"
             />
-            <p className="text-xs text-zinc-600 font-light">Paste your Cloudinary image URLs here. Each line represents one page/image in the reader.</p>
+            <p className="text-xs text-zinc-600 font-light">Each line represents one page/image in the reader.</p>
           </div>
 
           <div className="flex items-center gap-4 p-4 border border-white/10 bg-zinc-950">
